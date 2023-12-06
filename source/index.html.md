@@ -196,3 +196,7 @@ fileId | null | The file ID to query
 <aside class="notice">
 .NET assembly versions, as well as other .NET metadata, have only started being collected recently. As a result, this metadata may not be available for all files. We intend to rebuild this data for all files uploaded before, but this hasn't been done yet. We'll update the API topic once this has been completed.
 </aside>
+
+<aside class="notice">
+Filenames are chosen by the author, and as a result can and usually do change on version updates. You are recommended to iterate through the <i>files</i> object instead of hardcoding a specific file.
+</aside>
