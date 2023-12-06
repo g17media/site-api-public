@@ -3,12 +3,11 @@ title: API Reference
 
 language_tabs: # must be one of https://github.com/rouge-ruby/rouge/wiki/List-of-supported-languages-and-lexers
   - shell
-  - ruby
-  - python
-  - javascript
+  - csharp
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href="https://www.lcpdfr.com/terms/">Terms of Service</a>
+  - <a href="https://www.lcpdfr.com/privacy/">Privacy Policy</a>
   - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
 
 includes:
@@ -25,221 +24,175 @@ meta:
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the LCPDFR.com public website API.
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/slatedocs/slate). Feel free to edit it and use it as a base for your own API's documentation.
-
-# Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here" \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+<aside class="warning">
+If calling any of these functions within, for example, a RAGEPluginHook or LSPDFR plugin, you should not make network calls within a game executing thread or fiber as this will <i>freeze the game</i>. For an example of how to call in a seperate thread, see <a href="https://gist.github.com/LSPDFR-PeterU/952de66a4f17b838d3870bdaabb6c43b">AsyncUpdateChecker by PeterU</a>.
 </aside>
 
-# Kittens
+# Download Center
 
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Authorization
+For public download center API calls, no authentication is needed. You should however try to ensure your client gives a *unique User-Agent*. Calls without a User-Agent may be throttled.
+## Get user-facing version for a file
 
 ```shell
-curl "http://example.com/api/kittens" \
-  -H "Authorization: meowmeowmeow"
+curl "https://www.lcpdfr.com/applications/downloadsng/interface/api.php" \
+  -H "User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)" \
+  -d "do=checkForUpdates" \
+  -d "fileId=7792" \
+  -d "textOnly=1"
 ```
 
-```javascript
-const kittn = require('kittn');
+```csharp
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
+  public static string GetLatestVersion(int fileId)
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+      string updateEndpoint = "http://www.lcpdfr.com/applications/downloadsng/interface/api.php?do=checkForUpdates&fileId={0}&textOnly=true";
+      string latestVersion = null;
+      try {
+          using(WebClient client = new WebClient()) {
+              client.Headers.Add("user-agent", "CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)");
+              latestVersion = client.DownloadString(string.Format(updateEndpoint, fileId));
+          }
+      }
+      catch(Exception e) {
+              // Failed. Maybe log the exception.
+      }
+      return latestVersion;
   }
-]
 ```
 
-This endpoint retrieves all kittens.
+> The above command returns a text only response of the author provided file version.
+
+```
+0.4.9 (Build 8678)
+```
+
+This endpoint retrieves the latest author provided version of a file, given a file ID.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET https://www.lcpdfr.com/applications/downloadsng/interface/api.php`
 
 ### Query Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+do | null | Needs set to 'checkForUpdates'
+fileId | null | The file ID to query
+textOnly | false | Set to true to provide a text only (non JSON) response.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+<aside class="notice">
+Remember — the version provided is directly from the author, presented on their file page. It may or may not be accurate for automation or development purposes.
 </aside>
 
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Get .NET assembly versions for a file
 
 ```shell
-curl "http://example.com/api/kittens/2" \
-  -H "Authorization: meowmeowmeow"
+curl "https://www.lcpdfr.com/applications/downloadsng/interface/api.php" \
+  -H "User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)" \
+  -d "do=getAssemblies" \
+  -d "fileId=7792" 
 ```
 
-```javascript
-const kittn = require('kittn');
+```csharp
+/*
+ * This is an example of an async function that tries to retrieve the latest LSPDFR assembly version
+ */
+using System.Text.Json;
+using System.Net;
+using System;
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+public class AssemblyInfoRetriever
+{
+    private static readonly HttpClient client = new HttpClient();
+
+    public static async Task<string> GetLSPDFRAssemblyVersionAsync()
+    {
+        string url = "https://www.lcpdfr.com/applications/downloadsng/interface/api.php?do=getAssemblies&fileId=7792";
+        string assemblyVersion = null;
+
+        try
+        {
+            var response = await client.GetStringAsync(url);
+            using (JsonDocument doc = JsonDocument.Parse(response))
+            {
+                JsonElement root = doc.RootElement;
+                string error = root.GetProperty("error").GetString();
+
+                if (string.IsNullOrEmpty(error))
+                {
+					foreach(JsonProperty file in root.GetProperty("result").GetProperty("files").EnumerateObject()) {
+						if (file.Value.TryGetProperty("plugins/LSPD First Response.dll", out JsonElement versionElement)) {
+							assemblyVersion = versionElement.GetString();
+						}
+					}
+                }
+            }
+			if(assemblyVersion == null) {
+				throw new Exception("Couldn't find LSPDFR dll within result!");
+			}
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error occurred: " + ex.Message);
+        }
+
+        return assemblyVersion;
+    }
+}
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
+
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "error": "",
+  "result": {
+    "files": {
+      "lspdfr_049_8678_setup.exe": {},
+      "LSPDFR_049_8678_Manual_Install.zip": {
+        "DdsConvert.dll": "1.0.0.0",
+        "DiscordRpcNet.dll": "1.0.0.0",
+        "EasyHook.dll": "2.7.6578.0",
+        "EasyLoad64.dll": "2.7.6578.0",
+        "Gwen.dll": "1.0.0.0",
+        "Gwen.UnitTest.dll": "1.0.0.0",
+        "LMS.Common.dll": "1.0.0.0",
+        "LMS.PortableExecutable.dll": "1.0.0.0",
+        "lspdfr\/LSPDFR Configurator.exe": "1.0.0.0",
+        "lspdfr\/Microsoft.Expression.Drawing.dll": "4.5.0.0",
+        "Microsoft.Expression.Drawing.dll": "4.5.0.0",
+        "Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll": "10.0.0.0",
+        "Mono.Cecil.dll": "0.9.6.0",
+        "Mono.Cecil.Mdb.dll": "0.9.6.0",
+        "Mono.Cecil.Pdb.dll": "0.9.6.0",
+        "Mono.Cecil.Rocks.dll": "0.9.6.0",
+        "plugins\/LSPD First Response.dll": "0.4.8678.25591",
+        "RAGEPluginHook.exe": "1.0.0.0",
+        "SlimDX.dll": "4.0.13.43",
+        "System.ValueTuple.dll": "4.0.2.0"
+      }
+    }
+  }
 }
 ```
 
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+This endpoint retrieves all .NET assemblies inside all subfiles on a file submission.
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`GET https://www.lcpdfr.com/applications/downloadsng/interface/api.php`
 
 ### URL Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+Parameter | Default | Description
+--------- | ------- | -----------
+do | null | Needs set to 'getAssemblies'
+fileId | null | The file ID to query
 
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2" \
-  -X DELETE \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
-
+<aside class="notice">
+.NET assembly versions, as well as other .NET metadata, have only started being collected recently. As a result, this metadata may not be available for all files. We intend to rebuild this data for all files uploaded before, but this hasn't been done yet. We'll update the API topic once this has been completed.
+</aside>
