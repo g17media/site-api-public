@@ -328,6 +328,9 @@
                   <li>
                     <a href="#get-net-assembly-versions-for-a-file" class="toc-h2 toc-link" data-title="Get .NET assembly versions for a file">Get .NET assembly versions for a file</a>
                   </li>
+                  <li>
+                    <a href="#get-user-facing-version-of-all-files" class="toc-h2 toc-link" data-title="Get user-facing version of all files">Get user-facing version of all files</a>
+                  </li>
               </ul>
           </li>
       </ul>
@@ -349,6 +352,7 @@ If calling any of these functions within, for example, a RAGEPluginHook or LSPDF
 <h1 id='download-center'>Download Center</h1><h2 id='authorization'>Authorization</h2>
 <p>For public download center API calls, no authentication is needed. You should however try to ensure your client gives a <em>unique User-Agent</em>. Calls without a User-Agent may be throttled.</p>
 <h2 id='get-user-facing-version-for-a-file'>Get user-facing version for a file</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.lcpdfr.com/applications/downloadsng/interface/api.php"</span> <span class="se">\</span>
+  <span class="nt">-X</span> GET <span class="nt">-G</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s2">"User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)"</span> <span class="se">\</span>
   <span class="nt">-d</span> <span class="s2">"do=checkForUpdates"</span> <span class="se">\</span>
   <span class="nt">-d</span> <span class="s2">"fileId=7792"</span> <span class="se">\</span>
@@ -407,6 +411,7 @@ If calling any of these functions within, for example, a RAGEPluginHook or LSPDF
 Remember — the version provided is directly from the author, presented on their file page. It may or may not be accurate for automation or development purposes.
 </aside>
 <h2 id='get-net-assembly-versions-for-a-file'>Get .NET assembly versions for a file</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.lcpdfr.com/applications/downloadsng/interface/api.php"</span> <span class="se">\</span>
+  <span class="nt">-X</span> GET <span class="nt">-G</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s2">"User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)"</span> <span class="se">\</span>
   <span class="nt">-d</span> <span class="s2">"do=getAssemblies"</span> <span class="se">\</span>
   <span class="nt">-d</span> <span class="s2">"fileId=7792"</span> 
@@ -520,6 +525,68 @@ Remember — the version provided is directly from the author, presented on thei
 
 <aside class="notice">
 Filenames are chosen by the author, and as a result can and usually do change on version updates. You are recommended to iterate through the <i>files</i> object instead of hardcoding a specific file.
+</aside>
+<h2 id='get-user-facing-version-of-all-files'>Get user-facing version of all files</h2><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.lcpdfr.com/applications/downloadsng/interface/api.php"</span> <span class="se">\</span>
+  <span class="nt">-X</span> GET <span class="nt">-G</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s2">"do=getAllVersions"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s2">"categoryId=45"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s2">"page=1"</span>
+</code></pre></div>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"page"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"perPage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"500"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"totalResults"</span><span class="p">:</span><span class="w"> </span><span class="s2">"562"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"totalPages"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"results"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"file_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"47969"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"file_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Simple Speed Radar"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"file_submitter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"254392"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"file_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.5"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"file_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"47988"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"file_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"505 Callouts"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"file_submitter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"615323"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"file_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.1"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This endpoint retrieves all user-facing versions given a category ID, in bulk. It will always paginate by each 500 entries.</p>
+<h3 id='http-request-3'>HTTP Request</h3>
+<p><code>GET https://www.lcpdfr.com/applications/downloadsng/interface/api.php</code></p>
+<h3 id='url-parameters-2'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>do</td>
+<td>null</td>
+<td>Needs set to &#39;getAllVersions&#39;</td>
+</tr>
+<tr>
+<td>categoryId</td>
+<td>null</td>
+<td>The category ID to show files for.</td>
+</tr>
+<tr>
+<td>page</td>
+<td>1</td>
+<td>Results are paginated. This defines which page.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+.NET assembly versions are not included in this data, but may be in a future update.
 </aside>
 
       </div>
