@@ -38,6 +38,7 @@ For public download center API calls, no authentication is needed. You should ho
 
 ```shell
 curl "https://www.lcpdfr.com/applications/downloadsng/interface/api.php" \
+  -X GET -G \
   -H "User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)" \
   -d "do=checkForUpdates" \
   -d "fileId=7792" \
@@ -91,6 +92,7 @@ Remember — the version provided is directly from the author, presented on thei
 
 ```shell
 curl "https://www.lcpdfr.com/applications/downloadsng/interface/api.php" \
+  -X GET -G \
   -H "User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)" \
   -d "do=getAssemblies" \
   -d "fileId=7792" 
@@ -199,4 +201,58 @@ fileId | null | The file ID to query
 
 <aside class="notice">
 Filenames are chosen by the author, and as a result can and usually do change on version updates. You are recommended to iterate through the <i>files</i> object instead of hardcoding a specific file.
+</aside>
+
+## Get user-facing version of all files
+
+```shell
+curl "https://www.lcpdfr.com/applications/downloadsng/interface/api.php" \
+  -X GET -G \
+  -H "User-Agent: CyanCallouts/1.0 (+https://www.lcpdfr.com/profile/9-cyan/)" \
+  -d "do=getAllVersions" \
+  -d "categoryId=45" \
+  -d "page=1"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "page": "1",
+  "perPage": "500",
+  "totalResults": "562",
+  "totalPages": "2",
+  "results": [
+    {
+      "file_id": "47969",
+      "file_name": "Simple Speed Radar",
+      "file_submitter": "254392",
+      "file_version": "1.5"
+    },
+    {
+      "file_id": "47988",
+      "file_name": "505 Callouts",
+      "file_submitter": "615323",
+      "file_version": "1.0.1"
+    }
+  ]
+}
+```
+
+This endpoint retrieves all user-facing versions given a category ID, in bulk. It will always paginate by each 500 entries.
+
+### HTTP Request
+
+`GET https://www.lcpdfr.com/applications/downloadsng/interface/api.php`
+
+### URL Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+do | null | Needs set to 'getAllVersions'
+categoryId | null | The category ID to show files for.
+page | 1 | Results are paginated. This defines which page.
+
+<aside class="notice">
+.NET assembly versions are not included in this data, but may be in a future update.
 </aside>
